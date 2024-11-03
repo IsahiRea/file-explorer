@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 
@@ -21,9 +20,11 @@ func main() {
 	window := application.NewWindow("File Explorer")
 
 	dir := "./"
+	files, _ := os.ReadDir(dir)
+	var selectedFile string
+
 	fileList := widget.NewList(
 		func() int {
-			files, _ := os.ReadDir(dir)
 			return len(files)
 		},
 		func() fyne.CanvasObject {
@@ -35,11 +36,26 @@ func main() {
 		},
 	)
 
-	refreshButton := widget.NewButton("Refresh", func() {
+	var createButton, deleteButton *widget.Button
+
+	refreshTotal := func() {
+		files, _ = os.ReadDir(dir)
 		fileList.Refresh()
+		selectedFile = ""
+		deleteButton.Disable()
+	}
+
+	fileList.OnSelected = func(id widget.ListItemID) {
+		selectedFile = files[id].Name()
+		deleteButton.Enable()
+	}
+
+	// -------------------------------------------------------------------------------------
+	refreshButton := widget.NewButton("Refresh", func() {
+		refreshTotal()
 	})
 
-	createButton := widget.NewButton("Create File", func() {
+	createButton = widget.NewButton("Create File", func() {
 
 		fileNameEntry := widget.NewEntry()
 		fileNameEntry.SetPlaceHolder("Enter file name")
@@ -55,16 +71,39 @@ func main() {
 					}
 
 					file.Close()
-					fileList.Refresh()
-
-					fmt.Printf("File name entered: %v\n", fileName)
+					refreshTotal()
 				}
 			}, window)
 
 		form.Show()
 	})
 
-	controls := container.NewHBox(createButton, refreshButton)
+	deleteButton = widget.NewButton("Delete File", func() {
+
+		if selectedFile == "" {
+			dialog.ShowInformation("No file selected", "Please select a file", window)
+
+			return
+		}
+
+		form := dialog.NewForm("Delete File", "Delete", "Cancel", nil,
+			func(confirmed bool) {
+				if confirmed {
+
+					if err := os.Remove(filepath.Join(dir, selectedFile)); err != nil {
+						dialog.ShowError(err, window)
+					}
+
+					refreshTotal()
+				}
+			}, window)
+
+		form.Show()
+	})
+
+	deleteButton.Disable()
+
+	controls := container.NewHBox(createButton, deleteButton, refreshButton)
 	window.SetContent(container.NewBorder(controls, nil, nil, nil, fileList))
 	window.Resize(fyne.NewSize(400, 600))
 	window.ShowAndRun()
