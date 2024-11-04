@@ -41,7 +41,6 @@ A simple, cross-platform file explorer built with Go and Fyne. This project will
   - Click on any folder to navigate into it.
   - Use the "Up" button to go up one directory level.
 
-### WIP Usage
 - **File Operations**:
   - **Create File**: Click "Create File" and enter the file name.
   - **Rename File**: Select a file and click "Rename File" to enter a new name.

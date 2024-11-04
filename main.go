@@ -36,7 +36,7 @@ func main() {
 		},
 	)
 
-	var createButton, deleteButton *widget.Button
+	var createButton, deleteButton, renameButton *widget.Button
 
 	refreshTotal := func() {
 		files, _ = os.ReadDir(dir)
@@ -51,10 +51,6 @@ func main() {
 	}
 
 	// -------------------------------------------------------------------------------------
-	refreshButton := widget.NewButton("Refresh", func() {
-		refreshTotal()
-	})
-
 	createButton = widget.NewButton("Create File", func() {
 
 		fileNameEntry := widget.NewEntry()
@@ -82,7 +78,6 @@ func main() {
 
 		if selectedFile == "" {
 			dialog.ShowInformation("No file selected", "Please select a file", window)
-
 			return
 		}
 
@@ -101,9 +96,34 @@ func main() {
 		form.Show()
 	})
 
+	renameButton = widget.NewButton("Rename File", func() {
+
+		if selectedFile == "" {
+			dialog.ShowInformation("No file selected", "Please select a file", window)
+			return
+		}
+
+		fileNameEntry := widget.NewEntry()
+		fileNameEntry.SetPlaceHolder("Enter file name")
+
+		form := dialog.NewForm("Rename File", "Rename", "Cancel", []*widget.FormItem{widget.NewFormItem("File Name", fileNameEntry)},
+			func(confirmed bool) {
+				if confirmed {
+					fileName := fileNameEntry.Text
+					if err := os.Rename(filepath.Join(dir, selectedFile), filepath.Join(dir, fileName)); err != nil {
+						dialog.ShowError(err, window)
+					}
+
+					refreshTotal()
+				}
+			}, window)
+
+		form.Show()
+	})
+
 	deleteButton.Disable()
 
-	controls := container.NewHBox(createButton, deleteButton, refreshButton)
+	controls := container.NewHBox(createButton, deleteButton, renameButton)
 	window.SetContent(container.NewBorder(controls, nil, nil, nil, fileList))
 	window.Resize(fyne.NewSize(400, 600))
 	window.ShowAndRun()
