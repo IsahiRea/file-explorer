@@ -1,10 +1,10 @@
 package main
 
 import (
+	"log"
 	"time"
 
 	"fyne.io/fyne/v2"
-	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
 )
 
@@ -53,8 +53,10 @@ func CreateFileList(files *[]string, selectedFile *string, renameButton, deleteB
 			item.onDoubleClick = func() {
 				*selectedFile = fileName
 
-				//TODO Open the File
-				dialog.ShowInformation("File Opened", "Opened: "+fileName, window)
+				//FIXME Figure out how to open a file
+				if err := openFile(*selectedFile); err != nil {
+					log.Fatal(err)
+				}
 			}
 
 			item.onTapped = func() {
