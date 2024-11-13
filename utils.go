@@ -35,7 +35,7 @@ func isWSL() bool {
 		return false
 	}
 
-	return strings.Contains(string(b), "Microsoft")
+	return strings.Contains(string(b), "microsoft")
 }
 
 func openFile(fileName string) error {

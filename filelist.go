@@ -53,7 +53,6 @@ func CreateFileList(files *[]string, selectedFile *string, renameButton, deleteB
 			item.onDoubleClick = func() {
 				*selectedFile = fileName
 
-				//FIXME Figure out how to open a file
 				err := openFile(*selectedFile)
 				if err != nil {
 					dialog.ShowError(err, window)
