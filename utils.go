@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+	"strings"
 
 	"fyne.io/fyne/v2/widget"
 )
@@ -28,16 +29,30 @@ func RefreshFileList(files *[]string, currentDir string, fileList *widget.List) 
 	fileList.Refresh()
 }
 
+func isWSL() bool {
+	b, err := exec.Command("uname", "-r").Output()
+	if err != nil {
+		return false
+	}
+
+	return strings.Contains(string(b), "Microsoft")
+}
+
 func openFile(fileName string) error {
 	var cmd *exec.Cmd
 
 	switch runtime.GOOS {
 	case "windows":
-		cmd = exec.Command("cmd", "/C", "start", fileName)
+		cmd = exec.Command("cmd", "/c", "start", fileName)
 	case "darwin":
 		cmd = exec.Command("open", fileName)
 	case "linux":
-		cmd = exec.Command("xdg-open", fileName)
+		// Check for WSL
+		if isWSL() {
+			cmd = exec.Command("explorer.exe", fileName)
+		} else {
+			cmd = exec.Command("xdg-open", fileName)
+		}
 	default:
 		return fmt.Errorf("unsupported platform")
 	}
