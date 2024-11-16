@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime"
 	"strings"
 
@@ -22,6 +23,18 @@ func GetFiles(currentDir string) []string {
 	}
 
 	return fileNames
+}
+
+// TODO: Grab all directories from the path
+func GetDirs(currentDir string) []string {
+	path, err := os.Getwd()
+	if err != nil {
+		return nil
+	}
+
+	dirNames := strings.Split(filepath.ToSlash(path), "/")
+
+	return dirNames
 }
 
 func RefreshFileList(files *[]string, currentDir string, fileList *widget.List) {

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"time"
 
 	"fyne.io/fyne/v2"
@@ -64,6 +65,32 @@ func CreateFileList(files *[]string, selectedFile *string, renameButton, deleteB
 				*selectedFile = fileName
 				renameButton.Enable()
 				deleteButton.Enable()
+			}
+		},
+	)
+}
+
+func CreateDirList(dirs *[]string, selectedFile *string, window fyne.Window) *widget.List {
+	return widget.NewList(
+		func() int {
+			return len(*dirs)
+		},
+		func() fyne.CanvasObject {
+			return NewCustomListItem("", func() {}, func() {})
+		},
+		func(id widget.ListItemID, co fyne.CanvasObject) {
+			dirName := (*dirs)[id]
+			item := co.(*CustomListItem)
+
+			item.SetText(dirName)
+			item.onDoubleClick = func() {
+				*selectedFile = dirName
+
+				//TODO: Change the Directory
+				err := os.Chdir(dirName)
+				if err != nil {
+					dialog.ShowError(err, window)
+				}
 			}
 		},
 	)

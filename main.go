@@ -18,9 +18,12 @@ func main() {
 	window := application.NewWindow("File Explorer")
 
 	currentDir := "./"
+
 	var selectedFile string
 	var fileList *widget.List
+	var dirList *widget.List
 
+	dirs := GetDirs(currentDir)
 	files := GetFiles(currentDir)
 
 	// Define Buttons
@@ -38,10 +41,13 @@ func main() {
 	// File list with selection handling
 	fileList = CreateFileList(&files, &selectedFile, renameButton, deleteButton, window)
 
+	// TODO: Directory navigation
+	dirList = CreateDirList(&dirs, &selectedFile, window)
+
 	// Layout
 	controls := container.NewHBox(createButton, renameButton, deleteButton)
 
-	window.SetContent(container.NewBorder(nil, controls, nil, nil, fileList))
+	window.SetContent(container.NewBorder(dirList, controls, nil, nil, fileList))
 	window.Resize(fyne.NewSize(600, 400))
 	window.ShowAndRun()
 }
