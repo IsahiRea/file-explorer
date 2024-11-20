@@ -25,7 +25,6 @@ func GetFiles(currentDir string) []string {
 	return fileNames
 }
 
-// TODO: Grab all directories from the path
 func GetDirs(currentDir string) []string {
 	path, err := os.Getwd()
 	if err != nil {

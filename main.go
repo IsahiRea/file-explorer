@@ -42,12 +42,15 @@ func main() {
 	fileList = CreateFileList(&files, &selectedFile, renameButton, deleteButton, window)
 
 	// TODO: Directory navigation
-	dirList = CreateDirList(&dirs, &selectedFile, window)
+	dirList = CreateDirList(&dirs, &files, &selectedFile, fileList, window)
 
 	// Layout
+	path := container.NewHSplit(dirList, fileList)
 	controls := container.NewHBox(createButton, renameButton, deleteButton)
 
-	window.SetContent(container.NewBorder(dirList, controls, nil, nil, fileList))
+	layout := container.NewBorder(nil, controls, nil, nil, path)
+
+	window.SetContent(layout)
 	window.Resize(fyne.NewSize(600, 400))
 	window.ShowAndRun()
 }
