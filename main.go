@@ -17,7 +17,7 @@ func main() {
 	application := app.New()
 	window := application.NewWindow("File Explorer")
 
-	currentDir := "./"
+	currentDir, _ := os.Getwd()
 
 	var selectedFile string
 	var fileList *widget.List
@@ -41,8 +41,7 @@ func main() {
 	// File list with selection handling
 	fileList = CreateFileList(&files, &selectedFile, renameButton, deleteButton, window)
 
-	// TODO: Directory navigation
-	dirList = CreateDirList(&dirs, &files, &selectedFile, fileList, window)
+	dirList = CreateDirList(&dirs, &files, fileList, window)
 
 	// Layout
 	path := container.NewHSplit(dirList, fileList)

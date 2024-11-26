@@ -13,6 +13,7 @@ import (
 
 func GetFiles(currentDir string) []string {
 	files, err := os.ReadDir(currentDir)
+	fmt.Println(files)
 	if err != nil {
 		return nil
 	}
@@ -25,20 +26,17 @@ func GetFiles(currentDir string) []string {
 	return fileNames
 }
 
-func GetDirs(currentDir string) []string {
-	path, err := os.Getwd()
-	if err != nil {
-		return nil
-	}
-
-	dirNames := strings.Split(filepath.ToSlash(path), "/")
-
-	return dirNames
-}
-
 func RefreshFileList(files *[]string, currentDir string, fileList *widget.List) {
 	*files = GetFiles(currentDir)
 	fileList.Refresh()
+}
+
+func GetDirs(currentDir string) []string {
+
+	currentDir = strings.Trim(currentDir, "/")
+	dirNames := strings.Split(filepath.ToSlash(currentDir), "/")
+
+	return dirNames
 }
 
 func isWSL() bool {
