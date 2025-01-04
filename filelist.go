@@ -118,7 +118,7 @@ func CreateFileList(files *[]string, selectedFile *string, renameButton, deleteB
 	)
 }
 
-func CreateDirList(dirs *[]string, files *[]string, fileList *widget.List, window fyne.Window) *widget.List {
+func CreateDirList(currentDir string, dirs *[]string, files *[]string, fileList *widget.List, window fyne.Window) *widget.List {
 	return widget.NewList(
 		func() int {
 			return len(*dirs)
@@ -143,9 +143,12 @@ func CreateDirList(dirs *[]string, files *[]string, fileList *widget.List, windo
 					Change the var to the proper path
 					Update the fileList
 				*/
+
 				fmt.Println(dirName)
+				currentDir = dirName
+				path := compareDir(currentDir, dirName)
 				//os.Chdir(dirName)
-				RefreshFileList(files, dirName, fileList)
+				RefreshFileList(files, path, fileList)
 			}
 		},
 	)

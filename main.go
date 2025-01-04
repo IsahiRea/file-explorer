@@ -41,7 +41,7 @@ func main() {
 	// File list with selection handling
 	fileList = CreateFileList(&files, &selectedFile, renameButton, deleteButton, window)
 
-	dirList = CreateDirList(&dirs, &files, fileList, window)
+	dirList = CreateDirList(currentDir, &dirs, &files, fileList, window)
 
 	// Layout
 	path := container.NewHSplit(dirList, fileList)

@@ -31,6 +31,13 @@ func RefreshFileList(files *[]string, currentDir string, fileList *widget.List) 
 	fileList.Refresh()
 }
 
+// TODO: Implement this function
+// This function should find the directory path of the selected directory
+func compareDir(currentDir string, dirName string) string {
+
+	return ""
+}
+
 func GetDirs(currentDir string) []string {
 
 	currentDir = strings.Trim(currentDir, "/")
