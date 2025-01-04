@@ -18,6 +18,7 @@ func main() {
 	window := application.NewWindow("File Explorer")
 
 	currentDir, _ := os.Getwd()
+	println(currentDir)
 
 	var selectedFile string
 	var fileList *widget.List
@@ -39,9 +40,16 @@ func main() {
 	deleteButton.Disable()
 
 	// File list with selection handling
-	fileList = CreateFileList(&files, &selectedFile, renameButton, deleteButton, window)
+	fileList = CreateFileList(&currentDir, &files, &selectedFile, renameButton, deleteButton, window)
+	dirList = CreateDirList(&currentDir, &dirs, &files, window)
 
-	dirList = CreateDirList(currentDir, &dirs, &files, fileList, window)
+	// Go routine to refresh the file list and directory list
+	go func() {
+		for {
+			RefreshFileList(&files, currentDir, fileList)
+			RefreshDirList(&dirs, currentDir, dirList)
+		}
+	}()
 
 	// Layout
 	path := container.NewHSplit(dirList, fileList)

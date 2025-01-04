@@ -13,7 +13,6 @@ import (
 
 func GetFiles(currentDir string) []string {
 	files, err := os.ReadDir(currentDir)
-	fmt.Println(files)
 	if err != nil {
 		return nil
 	}
@@ -31,11 +30,43 @@ func RefreshFileList(files *[]string, currentDir string, fileList *widget.List) 
 	fileList.Refresh()
 }
 
-// TODO: Implement this function
-// This function should find the directory path of the selected directory
-func compareDir(currentDir string, dirName string) string {
+func RefreshDirList(dirs *[]string, currentDir string, dirList *widget.List) {
+	*dirs = GetDirs(currentDir)
+	dirList.Refresh()
+}
 
-	return ""
+func isDir(fileName string) bool {
+	fileInfo, err := os.Stat(fileName)
+	if err != nil {
+		return false
+	}
+
+	return fileInfo.IsDir()
+}
+
+func addDir(currentDir string, dirName string) string {
+	return filepath.Join(currentDir, dirName)
+}
+
+func findDir(currentDir string, dirName string) string {
+
+	// Split the current directory path
+	parts := strings.Split(filepath.ToSlash(currentDir), "/")
+
+	for i, part := range parts {
+		if part == dirName {
+			parts = parts[:i+1]
+			break
+		}
+	}
+
+	// Join the parts to form the new path
+	newPath := filepath.Join(parts...)
+	newPath = "/" + newPath
+
+	println(newPath)
+
+	return newPath
 }
 
 func GetDirs(currentDir string) []string {

@@ -82,7 +82,7 @@ func (r *CustomListItemRenderer) Objects() []fyne.CanvasObject {
 func (r *CustomListItemRenderer) Destroy() {}
 
 // ----------------------------------------------------------------------------------
-func CreateFileList(files *[]string, selectedFile *string, renameButton, deleteButton *widget.Button, window fyne.Window) *widget.List {
+func CreateFileList(currentDir *string, files *[]string, selectedFile *string, renameButton, deleteButton *widget.Button, window fyne.Window) *widget.List {
 	return widget.NewList(
 		func() int {
 			return len(*files)
@@ -96,17 +96,30 @@ func CreateFileList(files *[]string, selectedFile *string, renameButton, deleteB
 
 			item.SetText(fileName)
 
+			//FIXME: Sometimes List Item are not being displayed as directories
+
 			// Create Icon
-			item.Icon.Resource = theme.DocumentIcon()
+			if isDir(fileName) {
+				item.Icon.Resource = theme.FolderIcon()
+			} else {
+				item.Icon.Resource = theme.DocumentIcon()
+			}
 
 			item.onDoubleClick = func() {
+
 				*selectedFile = fileName
 
-				err := openFile(*selectedFile)
-				if err != nil {
-					dialog.ShowError(err, window)
-				}
+				// Check if the file is a directory
+				if isDir(*selectedFile) {
 
+					*currentDir = addDir(*currentDir, *selectedFile)
+					fmt.Println("Current Directory: ", *currentDir)
+				} else {
+					err := openFile(*selectedFile)
+					if err != nil {
+						dialog.ShowError(err, window)
+					}
+				}
 			}
 
 			item.onTapped = func() {
@@ -114,11 +127,12 @@ func CreateFileList(files *[]string, selectedFile *string, renameButton, deleteB
 				renameButton.Enable()
 				deleteButton.Enable()
 			}
+
 		},
 	)
 }
 
-func CreateDirList(currentDir string, dirs *[]string, files *[]string, fileList *widget.List, window fyne.Window) *widget.List {
+func CreateDirList(currentDir *string, dirs *[]string, files *[]string, window fyne.Window) *widget.List {
 	return widget.NewList(
 		func() int {
 			return len(*dirs)
@@ -136,19 +150,7 @@ func CreateDirList(currentDir string, dirs *[]string, files *[]string, fileList 
 			item.Icon.Resource = theme.FolderIcon()
 
 			item.onTapped = func() {
-				//TODO Grab the valid directory path
-				/*
-					Change the currentDir Var (Done)
-					Try passing in the var to this function
-					Change the var to the proper path
-					Update the fileList
-				*/
-
-				fmt.Println(dirName)
-				currentDir = dirName
-				path := compareDir(currentDir, dirName)
-				//os.Chdir(dirName)
-				RefreshFileList(files, path, fileList)
+				*currentDir = findDir(*currentDir, dirName)
 			}
 		},
 	)
