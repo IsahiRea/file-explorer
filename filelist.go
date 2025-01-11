@@ -96,10 +96,8 @@ func CreateFileList(currentDir *string, files *[]string, selectedFile *string, r
 
 			item.SetText(fileName)
 
-			//FIXME: Sometimes List Item are not being displayed as directories
-
 			// Create Icon
-			if isDir(fileName) {
+			if isDir(*currentDir, fileName) {
 				item.Icon.Resource = theme.FolderIcon()
 			} else {
 				item.Icon.Resource = theme.DocumentIcon()
@@ -110,7 +108,7 @@ func CreateFileList(currentDir *string, files *[]string, selectedFile *string, r
 				*selectedFile = fileName
 
 				// Check if the file is a directory
-				if isDir(*selectedFile) {
+				if isDir(*currentDir, *selectedFile) {
 
 					*currentDir = addDir(*currentDir, *selectedFile)
 					fmt.Println("Current Directory: ", *currentDir)

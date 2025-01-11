@@ -35,7 +35,10 @@ func RefreshDirList(dirs *[]string, currentDir string, dirList *widget.List) {
 	dirList.Refresh()
 }
 
-func isDir(fileName string) bool {
+func isDir(currentDir, fileName string) bool {
+
+	fileName = filepath.Join(currentDir, fileName)
+
 	fileInfo, err := os.Stat(fileName)
 	if err != nil {
 		return false
