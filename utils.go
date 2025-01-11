@@ -14,6 +14,7 @@ import (
 func GetFiles(currentDir string) []string {
 	files, err := os.ReadDir(currentDir)
 	if err != nil {
+		println(err)
 		return nil
 	}
 
@@ -41,6 +42,7 @@ func isDir(currentDir, fileName string) bool {
 
 	fileInfo, err := os.Stat(fileName)
 	if err != nil {
+		println(err)
 		return false
 	}
 
@@ -83,6 +85,7 @@ func GetDirs(currentDir string) []string {
 func isWSL() bool {
 	b, err := exec.Command("uname", "-r").Output()
 	if err != nil {
+		println(err)
 		return false
 	}
 
